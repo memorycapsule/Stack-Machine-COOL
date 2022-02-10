@@ -8,7 +8,8 @@ class Main inherits IO{
    temp2 : Int;
    temp3 : String;
    temp4 : String;
-   
+
+   (* Copy function taken from examples/list.cl*)
    print_list(l : List) : Object {
       if l.isNil() then out_string("\n")
                    else {
@@ -17,10 +18,33 @@ class Main inherits IO{
 		        }
       fi
    };
-
+   (*Popping a value off the stack by returning the tail *)
    pop_stack(newStack : List) : List{
       newStack.tail()
    };
+
+   (* Adding values by popping, storing values in temp variables and converting
+   them to integers, then adding them together and pushing back onto the stack*)
+   addValues(newStack : List) : List{{
+      newStack <- pop_stack(newStack);
+      temp1<- a2i.a2i(newStack.head());
+      newStack <- pop_stack(newStack);
+      temp2<- a2i.a2i(newStack.head());
+      newStack <- pop_stack(newStack);
+      newStack <- newStack.cons(a2i.i2a(temp1+temp2));
+   }};
+
+   (*Swapping position of two values by popping, storing in temp variables,
+   and then adding them back into the stack in a swapped order*)
+   swapValues(newStack : List) : List{{
+      newStack <- pop_stack(newStack);
+      temp3<- newStack.head();
+      newStack <- pop_stack(newStack);
+      temp4<- newStack.head();
+      newStack <- pop_stack(newStack);
+      newStack <- newStack.cons(temp3);
+      newStack <- newStack.cons(temp4);
+   }};
 
    main(): Object {{
       a2i <- new A2I;
@@ -33,20 +57,9 @@ class Main inherits IO{
                out_string("");
             } else
             if newStack.head() = "+" then{
-               newStack <- pop_stack(newStack);
-               temp1<- a2i.a2i(newStack.head());
-               newStack <- pop_stack(newStack);
-               temp2<- a2i.a2i(newStack.head());
-               newStack <- pop_stack(newStack);
-               newStack <- newStack.cons(a2i.i2a(temp1+temp2));
+               newStack <- addValues(newStack);
             }else if newStack.head() = "s" then{
-               newStack <- pop_stack(newStack);
-               temp3<- newStack.head();
-               newStack <- pop_stack(newStack);
-               temp4<- newStack.head();
-               newStack <- pop_stack(newStack);
-               newStack <- newStack.cons(temp3);
-               newStack <- newStack.cons(temp4);
+               newStack <- swapValues(newStack);
             }else newStack <- newStack
             fi fi fi;
          }
@@ -69,6 +82,9 @@ class Main inherits IO{
    }};
 };
 
+(* Classes List and Cons are taken from examples/list.cl,
+as this stack machine can have both numbers and characters, variables
+were changed from int to string*)
 class List {
    isNil() : Bool { true };
    head()  : String { { abort(); ""; } };
@@ -99,5 +115,3 @@ class Cons inherits List {
    };
 
 };
-
-
